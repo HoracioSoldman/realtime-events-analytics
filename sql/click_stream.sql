@@ -1,6 +1,4 @@
 
-CREATE DATABASE stream;
-
 CREATE TABLE "clicks" (
   "id" serial UNIQUE PRIMARY KEY NOT NULL,
   "session_id" text,

@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  pgdb:
+    image: postgres:14.1-alpine
+    container_name: pgdb_container
+    restart: always
+    environment:
+      - POSTGRES_DB=click_stream
+      - POSTGRES_USER=user_a
+      - POSTGRES_PASSWORD=pwd_a
+    ports:
+      - '5454:5432'
+    volumes: 
+      - db-data:/opt/dbdata/postgresql/data
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user_a@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: pwd_a
+    volumes:
+      - pgadmin-data:/opt/dbdata/pgadmin/data
+
+volumes:
+  db-data:
+    driver: local
+  pgadmin-data:
+    driver: local
+  
