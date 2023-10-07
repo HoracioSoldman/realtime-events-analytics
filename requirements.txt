@@ -3,3 +3,4 @@ numpy
 jupyterlab
 psycopg2-binary
 sqlalchemy
+kafka-python
