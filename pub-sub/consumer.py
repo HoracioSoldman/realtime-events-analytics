@@ -6,7 +6,7 @@ def run():
 
     consumer = KafkaConsumer(
         topic,
-        bootstrap_servers='127.0.0.1:9092', api_version=(3, 5, 1),
+        bootstrap_servers='127.0.0.1:29092', api_version=(3, 5, 1),
         auto_offset_reset='earliest',
         group_id='first-group-id'
     )
