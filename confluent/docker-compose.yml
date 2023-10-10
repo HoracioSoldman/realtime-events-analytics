@@ -83,19 +83,26 @@ services:
       PORT: 9021
 
   debezium:
-    image: debezium/connect:2.3.4.Final
+    image: debezium/connect:2.4
     container_name: debezium_container
     restart: on-failure
     environment:
-      BOOTSTRAP_SERVERS: kafka:29092
+      BOOTSTRAP_SERVERS: kafka:9092
       GROUP_ID: 1
       CONFIG_STORAGE_TOPIC: connect_configs
+      STATUS_STORAGE_TOPIC: connect_statuses
       OFFSET_STORAGE_TOPIC: connect_offsets
-      KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
-      VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-    depends_on: [kafka]
+      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      # ENABLE_DEBEZIUM_SCRIPTING: 'true'
+      # KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      # VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      # CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      # CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    depends_on: [pgdb, zookeeper, kafka]
+    links: 
+      - zookeeper
+      - pgdb
     ports:
       - 8083:8083
       
