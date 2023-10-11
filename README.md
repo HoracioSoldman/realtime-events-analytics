@@ -19,3 +19,7 @@ We need to make a little change in the Postgresql config file in order to captur
     ```sql
     select * from pg_settings where name = 'wal_level'
     ``` 
+
+- Create the two tables in which we will insert clicks and transactions data.
+
+For that, simply copy and run the content of [click_stream.sql](sql/click_stream.sql) on PgAdmin.
