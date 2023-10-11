@@ -33,3 +33,6 @@ CREATE TABLE "transactions" (
   "item_price" float,
   "created_at" date DEFAULT (now())
 );
+
+ALTER TABLE public.clicks REPLICA IDENTITY FULL;
+ALTER TABLE public.transactions REPLICA IDENTITY FULL;
