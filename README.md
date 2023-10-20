@@ -1,3 +1,17 @@
+### Data source
+
+For the current project, we will use an e-commerce dataset that is available on kaggle through [this link](https://www.kaggle.com/datasets/latifahhukma/fashion-campus/). The platform may require a sign-in before giving access to the download option. 
+
+Once downloaded, the dataset contains 6 csv files. We will only process 4 of them: 
+- __click_stream_new.csv__
+- __customer.csv__
+- __product.csv__
+- __transaction_new.csv__
+
+The ingestion of __click_stream_new.csv__ and __transaction_new.csv__ to the PostgreSQL database will be streamed in realtime. 
+
+For simplicity, the __customer.csv__ and __product.csv__ contents will be inserted in batch mode in the database. 
+
 ### Postgresql
 We need to make a little change in the Postgresql config file in order to capture the low-level change on the database.
 
