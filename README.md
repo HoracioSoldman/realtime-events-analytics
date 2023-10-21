@@ -10,7 +10,12 @@ Once downloaded, the dataset contains 6 csv files. We will only process 4 of the
 
 The ingestion of __click_stream_new.csv__ and __transaction_new.csv__ to the PostgreSQL database will be streamed in realtime. 
 
-For simplicity, the __customer.csv__ and __product.csv__ contents will be inserted in batch mode in the database. 
+
+#### Data preprocessing
+For simplicity, we will only stream one-day clicks and transactions events from the two aforementioned files. In [data-exploration/most_active_day.ipynb](/data-exploration/most_active_day.ipynb), we searched for the most active day based on click events. Then we outputed the filtered clicks and transactions records in the [data/processed/](/data/processed/) folder.
+
+For the two remaining files: __customer.csv__ and __product.csv__, their contents  will be inserted in batch mode in the database.
+
 
 ### Postgresql
 We need to make a little change in the Postgresql config file in order to capture the low-level change on the database.
