@@ -13,7 +13,6 @@ def preprocessing(df, numerical_fields, categorical_fields, field_types):
     df[numerical_fields] = df[numerical_fields].fillna('0')
     df[categorical_fields] = df[categorical_fields].fillna('')
     
-     
     try:
         df = df.astype(field_types)
     except Exception as e:
@@ -31,14 +30,15 @@ def create_connection():
     )
 
 
-def insertion(df, query):
+def insertion(df, query, type):
+    '''
+        Insert df records in the database with resepect to the offset time values
+    '''    
     inserted_records = 0
     try:
         pg_connection = create_connection()
         connection_cursor = pg_connection.cursor()
-        '''
-            Insert df records in the database with resepect to the offset time values
-        '''
+        
         
         for i, row in df.iterrows():
             row_values = row.values.tolist()
@@ -46,7 +46,7 @@ def insertion(df, query):
             # wait for x seconds based on the offset value
             time.sleep(row_values[-1])
 
-            print(f'Inserting a record after {row_values[-1]} seconds.')
+            print(f'Inserting a {type} record after {row_values[-1]} seconds.')
             connection_cursor.execute(query, row_values[:-1])
             pg_connection.commit()
             
@@ -113,9 +113,9 @@ def run():
                                         categorical_transacs_df_fields, transacs_df_data_types)
 
     # start data ingestion with multiprocessing
-    clicks_process = Process(target=insertion, args=(df_clicks_to_ingest, clicks_insertion_query))
+    clicks_process = Process(target=insertion, args=(df_clicks_to_ingest, clicks_insertion_query, 'click'))
     # insertion(df_clicks_to_ingest, clicks_insertion_query)
-    transacs_process = Process(target=insertion, args=(df_transactions_to_ingest, transactions_insertion_query))
+    transacs_process = Process(target=insertion, args=(df_transactions_to_ingest, transactions_insertion_query, 'transaction'))
     # insertion(df_transactions_to_ingest, transactions_insertion_query)
 
     clicks_process.start()
@@ -124,6 +124,5 @@ def run():
     transacs_process.join()
 
     
-
 if __name__ == '__main__':
     run()
