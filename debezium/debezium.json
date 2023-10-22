@@ -1,13 +1,14 @@
 {
   "name": "click-stream-connector",  
   "config": {
+    "plugin.name": "pgoutput",
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector", 
     "database.hostname": "pgdb", 
     "database.port": "5432", 
     "database.user": "user_a", 
     "database.password": "pwd_a", 
     "database.dbname" : "click_stream", 
-    "topic.prefix": "streams", 
+    "topic.prefix": "streaming", 
     "table.include.list": "public.clicks, public.transactions"
   }
 }

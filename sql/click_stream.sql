@@ -12,7 +12,7 @@ CREATE TABLE "clicks" (
   "search_keywords" varchar(50),
   "promo_code" varchar(20),
   "promo_amount" float,
-  "created_at" date DEFAULT (now())
+  "created_at" timestamp DEFAULT current_timestamp
 );
 
 CREATE TABLE "transactions" (
@@ -31,7 +31,7 @@ CREATE TABLE "transactions" (
   "product_id" integer,
   "quantity" integer,
   "item_price" float,
-  "created_at" date DEFAULT (now())
+  "created_at" timestamp DEFAULT current_timestamp
 );
 
 ALTER TABLE public.clicks REPLICA IDENTITY FULL;
