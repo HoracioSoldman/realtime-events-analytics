@@ -28,6 +28,7 @@ def kafka_consumer(kafka_topic, es, es_index):
         auto_offset_reset='earliest',
         group_id="elastic-group"
     )
+    print(f'The consumer for {kafka_topic} is up and listening.')
 
     while True:
         try:

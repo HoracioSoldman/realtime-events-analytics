@@ -1,3 +1,7 @@
+### Overview
+The following is the high-level architecture of the project.
+
+![The architecture](/images/realtime_click_events_architecture.png "The Architecture")
 ### Data source
 
 For the current project, we will use an e-commerce dataset that is available on kaggle through [this link](https://www.kaggle.com/datasets/latifahhukma/fashion-campus/). The platform may require a sign-in before giving access to the download option. 
