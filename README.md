@@ -1,7 +1,14 @@
+# Realtime click events analytics
+
+The current project performs a Change Data Capture (CDC) on a database and allows realtime analytics of the captured information with a set of several open source tools.
+
 ### Overview
-The following is the high-level architecture of the project.
+The following diagram shows a high-level architecture of the project.
 
 ![The architecture](/images/realtime_click_events_architecture.png "The Architecture")
+
+### Use case
+
 ### Data source
 
 For the current project, we will use an e-commerce dataset that is available on kaggle through [this link](https://www.kaggle.com/datasets/latifahhukma/fashion-campus/). The platform may require a sign-in before giving access to the download option. 
@@ -20,8 +27,8 @@ For simplicity, we will only stream one-day clicks and transactions events from 
 
 For the two remaining files: __customer.csv__ and __product.csv__, their contents  will be inserted in batch mode in the database.
 
-
-### Postgresql
+### The stack
+#### 1. Postgresql
 We need to make a little change in the Postgresql config file in order to capture the low-level change on the database.
 
 - Go to the Postgres container using:
@@ -49,11 +56,27 @@ We need to make a little change in the Postgresql config file in order to captur
 For that, simply copy and run the content of [click_stream.sql](sql/click_stream.sql) on PgAdmin.
 
 
-### Debezium
+#### 2. Debezium
 Debezium will capture the low level changes on our tables in the __click_strem__ database. To make it work, we need to create a Postgres debezium connector which will capture the data changes and send that information to a Kafka broker. 
 
 - To create the connector, simply send the [debezium.json](/debezium/debezium.json) content through a POST request to [http://localhost:8083/connectors](http://localhost:8083/connectors) using [postman](https://www.postman.com/) or [insomnia](https://insomnia.rest/). That request should also create kafka topics listed in the json file (i.e public.clicks, public.transactions). 
 
 - To check whether the connector was created, send a GET request to [http://localhost:8083/connectors](http://localhost:8083/connectors), it should return `["click-stream-connector"]`.
 
+#### 3. Apache Kafka
+
+
+#### 4. Elasticsearch
+
+
+#### 5. Kibana
+
+
+#### 6. Docker and Docker ompose
+
+
+### Running the project
+
+
+### Limitations
 
