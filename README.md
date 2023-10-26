@@ -184,7 +184,10 @@ In order to create a dashboard in Kibana. Head up to its address [http://localho
 
 Follow a quick guide provided in [Creating your first visualization with Kibana Lens](https://youtu.be/DzGwmr8nKPg?si=mv2tVYV6x3YwHXgJ).
 
-<!-- Add a screenshot of the final dashboard in from Kibana -->
+The following screenshot is part of the final dashboard which gets updated every 5 seconds.
+
+![The final dashboard](/images/final-dashboard.png "The final dashboard on Kibana") 
+
 
 ### Limitations and future improvements
 #### 1. No orchestration
