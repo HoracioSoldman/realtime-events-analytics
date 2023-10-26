@@ -1,5 +1,6 @@
 version: '3.8'
 services:
+  # Database 
   pgdb:
     image: postgres:14.1-alpine
     container_name: pgdb_container
@@ -26,6 +27,7 @@ services:
     volumes:
       - pgadmin-data:/opt/dbdata/pgadmin/data
 
+  # Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.5
     container_name: zookeeper_container
@@ -72,7 +74,7 @@ services:
       - 8083:8083
       
 
-    # ELK
+  # ELK
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
     container_name: elastic_container
