@@ -3,6 +3,7 @@ import time
 from elasticsearch import Elasticsearch, exceptions
 from kafka import KafkaConsumer
 from multiprocessing import Process
+from datetime import datetime
 
 ES_SERVER = 'http://localhost:9200'
 CLICKS_INDEX = 'clicks_index'
@@ -42,6 +43,11 @@ def kafka_consumer(kafka_topic, es, es_index):
                 print('\n—------OFFSET: ', consumption.offset)
                 dict_message =  dict(json.loads(str(consumption.value.decode('utf-8'))))
                 new_change = dict_message['payload']['after']
+                if 'created_at' in new_change:
+                    str_epoch = str(new_change['created_at'])[:10]
+                    int_epoch = int(str_epoch)
+                    creation_time = datetime.fromtimestamp(int_epoch).strftime('%Y-%m-%dT%H:%M:%S')
+                    new_change['created_at'] = creation_time
 
                 insert_result = es.index(index=es_index, document=new_change)
                 if insert_result['result'] and insert_result['result'] == 'created':
