@@ -114,9 +114,9 @@ def run():
 
     # start data ingestion with multiprocessing
     clicks_process = Process(target=insertion, args=(df_clicks_to_ingest, clicks_insertion_query, 'click'))
-    # insertion(df_clicks_to_ingest, clicks_insertion_query)
+    
     transacs_process = Process(target=insertion, args=(df_transactions_to_ingest, transactions_insertion_query, 'transaction'))
-    # insertion(df_transactions_to_ingest, transactions_insertion_query)
+    
 
     clicks_process.start()
     transacs_process.start()
