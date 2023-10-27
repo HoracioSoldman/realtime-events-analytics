@@ -1,7 +1,7 @@
 # Realtime click events analytics
 
 <!-- Add stack icons here -->
-The current project captures live events from a database and displays the retrieved information on a visualisation tool for real time analytics. Essentially, it utilises Change Data Capture (CDC) to listen for changes on an OLTP database then streams updates to intermediate components before making the data available on the final dashboard.
+The current project captures live events from a database and displays the retrieved information on a visualisation tool for real time analytics. In essence, it utilises Change Data Capture (CDC) to listen for changes on an OLTP database then streams updates to intermediate components before making the data available on the final dashboard.
 
 
 ## Table of contents
@@ -38,24 +38,25 @@ The following diagram shows a high-level architecture of the project.
 
 ## Data source
 
-For the current project, we will use an e-commerce dataset that is available on kaggle through [this link](https://www.kaggle.com/datasets/latifahhukma/fashion-campus/). The platform may require a sign-in before giving access to the download option. 
+For the current project, we will use an e-commerce dataset that is available on Kaggle website through [this link](https://www.kaggle.com/datasets/latifahhukma/fashion-campus/). The platform may require a sign-in before giving access to the dataset download option. 
 
-Once downloaded, the dataset contains 6 csv files. At this point we will only process 2 of them: 
+Once downloaded, the said dataset contains 6 csv files. At this stage, however, we will only process 2 of them:
 - __click_stream_new.csv__
 - __transaction_new.csv__
 
-In a production environment, a website records click stream and transaction events, then ingests these data to an OLTP database. For this project though, we replay that real time data ingestion based on the `event-time` columns in these two files.
+In a production environment, a website may record click stream and transaction events, then the generated data to an OLTP database. For this project though, we replay that real time data ingestion based on the `event-time` columns in these two files.
 
 
 ### Data preprocessing
-For simplicity, we will only stream one-day clicks and transactions from the two aforementioned files. In [data-exploration/most_active_day.ipynb](/data-exploration/most_active_day.ipynb), we searched for the most active day based on click events. Then we output the filtered records in the [data/processed/](/data/processed/) folder.
+Instead of taking all the records in these files, here we will only stream one-day clicks and transactions items, for simplicity. In the [data-exploration/most_active_day.ipynb](/data-exploration/most_active_day.ipynb) notebook, we searched for the most active day based on click events. Then we output the filtered records in the [data/processed/](/data/processed/) folder.
+For the rest of the process, we will only utilise these preprocessed files. 
 
 
 ## The stack
-We have selected several open-source tools to form our data stack for the current project.
+For the project stack, we have selected several open and closed source tools to form the building blocks of our data pipeline.
 
 ### 1. PostgreSQL
-[PostgreSQL](https://www.postgresql.org/) is a highly advanced open source relational database. We opted for this RDBMS as it supports enterprise-level applications with fast write/read events. Here we employ PostgreSQL to store click and transaction records from the 2 csv files.
+[PostgreSQL](https://www.postgresql.org/) is a highly advanced open source relational database. We opted for this RDBMS as it supports enterprise-level applications with fast write/read events. Here we employ PostgreSQL to store click and transaction records from the 2 prepared csv files.
 
 ### 2. Debezium
 [Debezium](https://debezium.io/) is an open source distributed platform for change data capture. In this project, Debezium captures low level changes on our tables in the `click_stream` database and sends the captured information to Kafka. 
@@ -64,7 +65,7 @@ We have selected several open-source tools to form our data stack for the curren
 [Apache Kafka](https://kafka.apache.org/) is another open-source platform which enables distributed event streaming, high-performance data pipelines, stream analytics as well as efficient data integrations. Here we utilise Kafka to guarantee the delivery of the streamed data to the right consumer groups before ingesting them to Elasticsearch.
 
 ### 4. Elasticsearch
-[Elasticsearch](https://www.elastic.co/) is the **E** in the ELK stack which is a shorthand of Elasticsearch Logstash and Kibana. Elasticsearch is a powerful search engine software which provides a distributed and multitenant-capable full-text search. Although Elasticsearch does not belong to the open-source community, we chose to add it to our stack since it is a crucial component allowing us to visualise our data in Kibana.    
+[Elasticsearch](https://www.elastic.co/) is the **E** in the popular ELK stack which is a shorthand for Elasticsearch Logstash and Kibana. Elasticsearch is a powerful search engine software which provides a distributed and multitenant-capable full-text search. Although Elasticsearch does not belong to the open-source community, we chose to add it to our stack since it is an essential component allowing us to visualise our data in Kibana.    
 
 ### 5. Kibana
 [Kibana](https://www.elastic.co/kibana) is a rich visualisation tool which enables data analytics at speed and scale for observability, security and search. Kibana is the **K** in the popular ELK stack. It enables us to visualise the streamed data in realtime.  
@@ -95,7 +96,6 @@ git clone https://github.com/HoracioSoldman/realtime-events-analytics.git
 ```
 
 ### 3. Create a virtual environment
-Create an environment
 ```bash
 pip install virtualenv
 ```
@@ -117,9 +117,9 @@ pip install -r requirements.txt
 ```bash
 docker compose up -d
 ```
-At the very first time we run the above command, it takes some time to download all the Docker images depending on one's internet speed.
+At the very first time we run the above command, it may take some time to download all the Docker images described in the [docker-compose.yml](docker-compose.yml).
 
-It might be also useful to watch the status of the containers once they are up and running. To do so, open a new terminal window and run:
+It might be also useful to watch the status of the containers once they are up and running. To do so, open a new terminal window or tab, then run:
 ```bash
 watch docker ps
 ```
@@ -127,7 +127,7 @@ This command shows a fairly basic container monitoring with an auto-refresh for 
 
 
 ### 5. PostgreSQL
-We need to make a little change in the Postgresql config file in order to capture the low-level change on the database.
+Once the containers are up and running, we need to make a little change in the Postgresql config file in order to capture the low-level change on the database.
 
 - Go to the Postgres container using:
     ```bash
@@ -136,13 +136,13 @@ We need to make a little change in the Postgresql config file in order to captur
 
 - Open the config file: `/var/lib/postgresql/data/postgresql.conf` using vi, nano or any text editor.
 
-    Set the `wal_level` from __replica__ to __logical__. 
+    Set the **wal_level** from `replica` to `logical`. 
 
-- Restart the Postgresql container
+- Logout from the container and Restart the Postgresql container
     ```bash
     docker restart pgdb_container
     ```
-- Go to the pgAdmin UI on: [http://localhost:8088](http://localhost:8088), enter the relevant credentials mentioned in the [docker-compose.yml](docker-compose.yml) file, under the __pgadmin__ service.
+- Go to the pgAdmin UI on: [http://localhost:8088](http://localhost:8088), enter the relevant credentials mentioned in the [docker-compose.yml](docker-compose.yml) file, under the `pgadmin` service.
 
 - Register a new server in PGAdmin with the following details:
 
@@ -156,7 +156,7 @@ We need to make a little change in the Postgresql config file in order to captur
     select * from pg_settings where name = 'wal_level'
     ``` 
 
-- Create the two tables in which we will insert clicks and transactions data.
+- Create two tables in which we will insert clicks and transactions data.
 
     For that, simply copy and run the content of [click_stream.sql](sql/click_stream.sql) on PgAdmin.
 
@@ -164,19 +164,19 @@ We need to make a little change in the Postgresql config file in order to captur
 
 - Create a Postgres Debezium connector
 
-    To do so, simply send a POST request to [http://localhost:8083/connectors](http://localhost:8083/connectors) via Postman or Insomnia.
-    In the request, add the [debezium.json's](/debezium/debezium.json) content as its body. 
+    To do so, we need to send a POST request to [http://localhost:8083/connectors](http://localhost:8083/connectors) via Postman or Insomnia.
+    In the request, add the [debezium.json's](/debezium/debezium.json) content as its body. We should receive a 200 status.
     
     That request should also create two kafka topics listed in the json file (i.e streaming.public.clicks, streaming.public.transactions). 
 
-- To check whether the connector was created, send a GET request to [http://localhost:8083/connectors](http://localhost:8083/connectors), it should return `["click-stream-connector"]`.
+- To check whether the connector was created, send a GET request to [http://localhost:8083/connectors](http://localhost:8083/connectors). If everything went well, the request should return the list of available connectors like `["click-stream-connector"]`.
 
-- Verify that the two kafka topics were also created successfully.
+- In order to verify whether the two kafka topics were also created or not, run
     
     ```bash
     docker exec -it kafka_container /bin/bash 
     ```
-    Once inside the container, run:
+    Once inside the container, execute:
     ```bash
     /bin/kafka-topics --bootstrap-server=localhost:29092 --list
     ```
@@ -204,15 +204,17 @@ Once the building blocks of the infrastructure is up, we can start playing the d
     ```bash
     cd pub_sub && python ingestion.py
     ```
-    The script should immediately start inserting clicks events in the database. At the same time, we should also see updated messages on the `elastic_consumer.py` terminal.
+    The script should immediately start inserting click events in the database. At the same time, we should also see updated messages on the `elastic_consumer.py` terminal.
  
 
 ### 8. Create Dashboards on Kibana
-In order to create a dashboard in Kibana. Head up to its address [http://localhost:5601](http://localhost:5601). 
+In order to create a dashboard in Kibana. Head over to its local  address [http://localhost:5601](http://localhost:5601).
 
-Follow a quick guide provided in [Creating your first visualisation with Kibana Lens](https://youtu.be/DzGwmr8nKPg?si=mv2tVYV6x3YwHXgJ).
+Until now, the process of discovering the data and creating dashboards on Kibana are still manual. Thus, we decided not to include how we can complete these tasks in this guide. 
 
-The following screenshot is part of the final dashboard which gets updated every 5 seconds.
+Nevertheless, here is a quick and useful guide on how to get started with Kibana in the following Youtube video: [Creating your first visualisation with Kibana Lens](https://youtu.be/DzGwmr8nKPg?si=mv2tVYV6x3YwHXgJ). Hope it helps.
+
+The next screenshot is part of our final dashboard on Kibana. It gets updated every 5 seconds.
 
 ![The final dashboard](/images/final-dashboard.png "The final dashboard on Kibana") 
 
@@ -220,13 +222,13 @@ The following screenshot is part of the final dashboard which gets updated every
 ## Limitations and future improvements
 ### 1. Orchestration
 
-So far, the project hasn't utilised any orchestration tools. The essential scripts, namely [ingestion.py](/pub-sub/ingestion.py) and [elastic_consumer.py](/pub-sub/elastic_consumer.py) responsible for initiating and terminating the real-time data flow, currently require manual activation. In a production setting, it's preferable to schedule the execution of these scripts. Furthermore, orchestration tools provide an intuitive web user interface, simplifying the monitoring of these processes. Incorporating an orchestration tool such as [Dagster](https://dagster.io/), [Prefect](https://www.prefect.io/) or [Airflow](https://airflow.apache.org/) is a potential enhancement to be considered in the future.
+So far, the project hasn't utilised any orchestration tool yet. The essential scripts, namely the [ingestion.py](/pub-sub/ingestion.py) and [elastic_consumer.py](/pub-sub/elastic_consumer.py) which initiate and terminate the real-time data flow, currently require manual activation. In a production setting, it's preferable to schedule the execution of these scripts. Furthermore, orchestration tools provide an intuitive web user interface, simplifying the monitoring of these processes. Incorporating an orchestration tool such as [Dagster](https://dagster.io/), [Prefect](https://www.prefect.io/) or [Airflow](https://airflow.apache.org/) is a potential enhancement to be considered in the future.
 
 
 ### 2. Backfilling process
 There is a possibility that the pipeline may experience disruptions in the future. If such interruptions occur, the primary consequence will be a potential degradation in the quality of the data being observed and analysed on the Kibana dashboard.
 
-To mitigate this risk, it is important to establish an alerting system as a preliminary measure. This alerting system will keep us informed of any potential downtime, enabling a proactive response. In addition to alerts, a well-defined backfilling process is essential. This process will act as a mechanism to replenish or rectify any corrupted data resulting from the pipeline downtime, ensuring data integrity and reliability on the visualisation platform.
+To mitigate this risk, it is important to establish an alerting system as a preliminary measure. This alerting system will keep us informed of any potential downtime, enabling a proactive response. In addition to alerts, a well-defined backfilling process is also essential. This process will act as a mechanism to replenish or rectify any corrupted data resulting from the pipeline downtime, ensuring data integrity and reliability on the visualisation platform in the long run.
 
 
 Feel free to open an issue for any suggestions or comments 😊
