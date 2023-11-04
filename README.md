@@ -108,6 +108,9 @@ Enable the environment
 source <virtual-environment-name>/bin/activate
 ```
 
+Make a copy the `.env.example` file and name it as `.env`. Then provide values for each variable in it.
+
+
 Install python libraries
 ```bash
 pip install -r requirements.txt
@@ -161,6 +164,8 @@ Once the containers are up and running, we need to make a little change in the P
     For that, simply copy and run the content of [click_stream.sql](sql/click_stream.sql) on PgAdmin.
 
 ### 6. Debezium
+
+- Update the PostgreSQL credentials in the [debezium.json's](/debezium/debezium.json) based in what we previously added in the `.env` file.
 
 - Create a Postgres Debezium connector
 

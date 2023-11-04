@@ -3,11 +3,11 @@
   "config": {
     "plugin.name": "pgoutput",
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector", 
-    "database.hostname": "pgdb", 
-    "database.port": "5432", 
-    "database.user": "user_a", 
-    "database.password": "pwd_a", 
-    "database.dbname" : "click_stream", 
+    "database.hostname": "<PG_HOST>",
+    "database.port": "<PG_PORT>",
+    "database.user": "<PG_USER>",
+    "database.password": "<PG_PASSWORD>",
+    "database.dbname" : "<PG_DATABASE>",
     "topic.prefix": "streaming", 
     "table.include.list": "public.clicks, public.transactions"
   }

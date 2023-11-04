@@ -1,8 +1,11 @@
+import os
 import pandas as pd
 import psycopg2
 import time
-from multiprocessing import Process
 import logging
+from multiprocessing import Process
+from dotenv import load_dotenv
+
 
 CLICKS_SOURCE_PATH = '../data/processed/one-day-clicks.csv'
 TRANSACTIONS_SOURCE_PATH = '../data/processed/one-day-transactions.csv'
@@ -26,11 +29,11 @@ def preprocessing(df, numerical_fields, categorical_fields, field_types):
 
 def create_connection():
     return psycopg2.connect(
-        user='user_a',
-        password='pwd_a',
-        host='127.0.0.1',
-        port=5454,
-        database='click_stream'
+        user=os.getenv('PG_USER'),
+        password=os.getenv('PG_PASSWORD'),
+        host=os.getenv('PG_HOST'),
+        port=os.getenv('PG_PORT'),
+        database=os.getenv('PG_DATABASE')
     )
 
 
@@ -69,6 +72,7 @@ def insertion(df, query, insertion_type):
 
 
 def run():
+    load_dotenv()
     numerical_clicks_df_fields = ['product_id', 'quantity', 'item_price', 'promo_amount']
     categorical_clicks_df_fields = ['session_id', 'event_name', 'event_id', 'traffic_source',
                                     'payment_status', 'search_keywords', 'promo_code']

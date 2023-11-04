@@ -4,3 +4,4 @@ jupyterlab
 psycopg2-binary
 kafka-python
 elasticsearch
+python-dotenv
