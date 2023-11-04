@@ -9,6 +9,40 @@ from dotenv import load_dotenv
 
 CLICKS_SOURCE_PATH = '../data/processed/one-day-clicks.csv'
 TRANSACTIONS_SOURCE_PATH = '../data/processed/one-day-transactions.csv'
+numerical_clicks_df_fields = ['product_id', 'quantity', 'item_price', 'promo_amount']
+categorical_clicks_df_fields = ['session_id', 'event_name', 'event_id', 'traffic_source',
+                                'payment_status', 'search_keywords', 'promo_code']
+clicks_df_data_types = {
+    'session_id': str, 'event_name': str, 'event_id': str,
+    'traffic_source': str, 'product_id': float, 'quantity': float,
+    'item_price': float, 'payment_status': str, 'search_keywords': str,
+    'promo_code': str, 'promo_amount': float, 'event_offset': float
+}
+
+clicks_insertion_query = '''
+    insert into clicks(session_id, event_name, event_id, traffic_source, product_id, quantity,
+    item_price, payment_status, search_keywords, promo_code, promo_amount)
+    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+'''
+
+numerical_transacs_df_fields = ['customer_id', 'promo_amount', 'shipment_fee', 'total_amount',
+                                'product_id', 'quantity', 'item_price']
+categorical_transacs_df_fields = ['booking_id', 'session_id', 'payment_method', 'payment_status',
+                                  'promo_code', 'shipment_location_lat', 'shipment_location_long']
+transacs_df_data_types = {
+    'customer_id': float, 'booking_id': str, 'session_id': str, 'payment_method': str,
+    'payment_status': str, 'promo_amount': float, 'promo_code': str, 'shipment_fee': float,
+    'shipment_location_lat': str, 'shipment_location_long': str, 'total_amount': float,
+    'product_id': float, 'quantity': float, 'item_price': float, 'event_offset': float
+}
+
+transactions_insertion_query = '''
+    insert into transactions(customer_id, booking_id, session_id, payment_method,
+    payment_status, promo_amount, promo_code, shipment_fee,
+    shipment_location_lat, shipment_location_lon, total_amount,
+    product_id, quantity, item_price)
+    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+'''
 
 
 def preprocessing(df, numerical_fields, categorical_fields, field_types):
@@ -73,40 +107,6 @@ def insertion(df, query, insertion_type):
 
 def run():
     load_dotenv()
-    numerical_clicks_df_fields = ['product_id', 'quantity', 'item_price', 'promo_amount']
-    categorical_clicks_df_fields = ['session_id', 'event_name', 'event_id', 'traffic_source',
-                                    'payment_status', 'search_keywords', 'promo_code']
-    clicks_df_data_types = {
-        'session_id': str, 'event_name': str, 'event_id': str,
-        'traffic_source': str, 'product_id': float, 'quantity': float,
-        'item_price': float, 'payment_status': str, 'search_keywords': str,
-        'promo_code': str, 'promo_amount': float, 'event_offset': float
-    }
-
-    clicks_insertion_query = '''
-        insert into clicks(session_id, event_name, event_id, traffic_source, product_id, quantity,
-        item_price, payment_status, search_keywords, promo_code, promo_amount)
-        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    '''
-
-    numerical_transacs_df_fields = ['customer_id', 'promo_amount', 'shipment_fee', 'total_amount',
-                                    'product_id', 'quantity', 'item_price']
-    categorical_transacs_df_fields = ['booking_id', 'session_id', 'payment_method', 'payment_status',
-                                      'promo_code', 'shipment_location_lat', 'shipment_location_long']
-    transacs_df_data_types = {
-        'customer_id': float, 'booking_id': str, 'session_id': str, 'payment_method': str,
-        'payment_status': str, 'promo_amount': float, 'promo_code': str, 'shipment_fee': float,
-        'shipment_location_lat': str, 'shipment_location_long': str, 'total_amount': float,
-        'product_id': float, 'quantity': float, 'item_price': float, 'event_offset': float
-    }
-
-    transactions_insertion_query = '''
-        insert into transactions(customer_id, booking_id, session_id, payment_method,
-        payment_status, promo_amount, promo_code, shipment_fee,
-        shipment_location_lat, shipment_location_lon, total_amount,
-        product_id, quantity, item_price)
-        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    '''
 
     df_click_events = pd.read_csv(CLICKS_SOURCE_PATH)
 
