@@ -4,7 +4,7 @@ services:
   pgdb:
     image: postgres:14.1-alpine
     container_name: pgdb_container
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_DB={PG_DATABASE}
       - POSTGRES_USER={PG_USER}
@@ -18,7 +18,7 @@ services:
     image: dpage/pgadmin4
     depends_on: [pgdb]
     container_name: pgadmin_container
-    restart: always
+    restart: unless-stopped
     ports:
       - "8088:80"
     environment:
@@ -31,7 +31,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.5
     container_name: zookeeper_container
-    restart: on-failure
+    restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -41,7 +41,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.3.5
     container_name: kafka_container
-    restart: on-failure
+    restart: unless-stopped
     depends_on: [zookeeper]
     environment:
       KAFKA_ID: 1
@@ -57,7 +57,7 @@ services:
   debezium:
     image: debezium/connect:2.4
     container_name: debezium_container
-    restart: on-failure
+    restart: unless-stopped
     environment:
       BOOTSTRAP_SERVERS: kafka:9092
       GROUP_ID: 1
@@ -82,7 +82,7 @@ services:
       - '9200:9200'
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - elastic_net
     environment:
@@ -99,7 +99,7 @@ services:
       - '5601:5601'
     volumes:
       - kibana-data:/usr/share/kibana/data
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - elastic_net
     environment:
