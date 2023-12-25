@@ -206,12 +206,8 @@ The next screenshot is part of our final dashboard on Kibana. It gets updated ev
 
 
 ## Limitations and future improvements
-### 1. Orchestration
 
-So far, the project hasn't utilised any orchestration tool yet. The essential scripts, namely the [ingestion.py](/pub-sub/ingestion.py) and [elastic_consumer.py](/pub-sub/kafka_consumer.py) which initiate and terminate the real-time data flow, currently require manual activation. In a production setting, it's preferable to schedule the execution of these scripts. Furthermore, orchestration tools provide an intuitive web user interface, simplifying the monitoring of these processes. Incorporating an orchestration tool such as [Dagster](https://dagster.io/), [Prefect](https://www.prefect.io/) or [Airflow](https://airflow.apache.org/) is a potential enhancement to be considered in the future.
-
-
-### 2. Backfilling process
+### 1. Backfilling process
 There is a possibility that the pipeline may experience disruptions in the future. If such interruptions occur, the primary consequence will be a potential degradation in the quality of the data being observed and analysed on the Kibana dashboard.
 
 To mitigate this risk, it is important to establish an alerting system as a preliminary measure. This alerting system will keep us informed of any potential downtime, enabling a proactive response. In addition to alerts, a well-defined backfilling process is also essential. This process will act as a mechanism to replenish or rectify any corrupted data resulting from the pipeline downtime, ensuring data integrity and reliability on the visualisation platform in the long run.
