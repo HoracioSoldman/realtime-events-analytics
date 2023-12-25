@@ -6,7 +6,7 @@ from kafka import KafkaConsumer
 from multiprocessing import Process
 from datetime import datetime
 
-ES_SERVER = 'http://localhost:9200'
+ES_SERVER = 'http://127.0.0.1:9200'
 CLICKS_INDEX = 'clicks_index'
 TRANSACTIONS_INDEX = 'transactions_index'
 

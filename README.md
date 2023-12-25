@@ -18,7 +18,7 @@ The current project captures live events from a database and displays the retrie
 - [Running the project](#running-the-project)
   * [1. Requierements](#1-requirements)
   * [2. Clone the repository](#2-clone-the-repository)
-  * [3. Create a virtual environment](#3-create-a-virtual-environment)
+  * [3. Build a docker image for our python scripts](#3-build-a-docker-image-for-our-python-scripts)
   * [4. Run docker compose](#4-run-docker-compose)
   * [5. PostgreSQL](#5-postgresql)
   * [6. Debezium](#6-debezium)
@@ -83,9 +83,6 @@ For the project stack, we have selected several open and closed source tools to 
 
     The project relies heavily on Docker and docker compose to run most of its components. It is then advised to install these first in case they are not available yet in the environment we intend to run the project.
 
-* Python 3.9+
-
-    It is also required to have Python 3.9 or higher to execute the existing python scripts.
 
 * A minimum RAM of 8Gb to spin up all the necessary containers described in the [docker-compose.yml](docker-compose.yml) file.
 
@@ -95,26 +92,14 @@ For the project stack, we have selected several open and closed source tools to 
 git clone https://github.com/HoracioSoldman/realtime-events-analytics.git
 ```
 
-### 3. Create a virtual environment
+### 3. Build a docker image for our python scripts 
 ```bash
-pip install virtualenv
+docker build -t pub_sub .
 ```
-```bash
-python<version> -m venv <virtual-environment-name>
-```
+As described in the [Dockerfile](Dockerfile), the image will contain the python scripts located in the [pub-sub](pub-sub/) folder. They will ingest data from a csv file to the postgres database and from Kafka to Elasticsearch.
 
-Enable the environment
-```bash
-source <virtual-environment-name>/bin/activate
-```
+Once the CDC part is set up, we will run the image in a container to start the data flow.
 
-Make a copy the `.env.example` file and name it as `.env`. Then provide values for each variable in it.
-
-
-Install python libraries
-```bash
-pip install -r requirements.txt
-```
 
 ### 4. Run docker compose
 ```bash
@@ -193,24 +178,20 @@ Once the containers are up and running, we need to make a little change in the P
     docker container logs -f debezium_container
     ```
 
-### 7. Elastic Consumer
+### 7. Kafka Consumer
 Once the building blocks of the infrastructure is up, we can start playing the data flow which involves capturing in real time changes from the `click-stream` database and displaying them to the Kibana dashboards.
 
-* Open a new Terminal tab or window and run:
-    ```bash
-    python pub_sub/elastic_consumer.py
-    ```
-    We should see a message like:
-    
-    `The consumer for streaming.public.clicks is up and listening.`
-    
-    `The consumer for streaming.public.transactions is up and listening.`
-* Open another Terminal tab or window and run:
-    ```bash
-    cd pub_sub && python ingestion.py
-    ```
-    The script should immediately start inserting click events in the database. At the same time, we should also see updated messages on the `elastic_consumer.py` terminal.
- 
+Run the docker image we built at [step 3](#3-build-a-docker-image-for-our-python-scripts):
+  ```bash
+  docker run -it --network host pub_sub
+  ```
+  We should now see the following messages on the terminal:
+  
+  `The consumer for streaming.public.clicks is up and listening.`
+  
+  `The consumer for streaming.public.transactions is up and listening.`
+
+What happened here is that we started listening to two Kafka topics (i.e clicks and transactions), then we also started ingesting data from csv files to the postgres database.
 
 ### 8. Create Dashboards on Kibana
 In order to create a dashboard in Kibana. Head over to its local  address [http://localhost:5601](http://localhost:5601).
@@ -227,7 +208,7 @@ The next screenshot is part of our final dashboard on Kibana. It gets updated ev
 ## Limitations and future improvements
 ### 1. Orchestration
 
-So far, the project hasn't utilised any orchestration tool yet. The essential scripts, namely the [ingestion.py](/pub-sub/ingestion.py) and [elastic_consumer.py](/pub-sub/elastic_consumer.py) which initiate and terminate the real-time data flow, currently require manual activation. In a production setting, it's preferable to schedule the execution of these scripts. Furthermore, orchestration tools provide an intuitive web user interface, simplifying the monitoring of these processes. Incorporating an orchestration tool such as [Dagster](https://dagster.io/), [Prefect](https://www.prefect.io/) or [Airflow](https://airflow.apache.org/) is a potential enhancement to be considered in the future.
+So far, the project hasn't utilised any orchestration tool yet. The essential scripts, namely the [ingestion.py](/pub-sub/ingestion.py) and [elastic_consumer.py](/pub-sub/kafka_consumer.py) which initiate and terminate the real-time data flow, currently require manual activation. In a production setting, it's preferable to schedule the execution of these scripts. Furthermore, orchestration tools provide an intuitive web user interface, simplifying the monitoring of these processes. Incorporating an orchestration tool such as [Dagster](https://dagster.io/), [Prefect](https://www.prefect.io/) or [Airflow](https://airflow.apache.org/) is a potential enhancement to be considered in the future.
 
 
 ### 2. Backfilling process

@@ -7,8 +7,8 @@ from multiprocessing import Process
 from dotenv import load_dotenv
 
 
-CLICKS_SOURCE_PATH = '../data/processed/one-day-clicks.csv'
-TRANSACTIONS_SOURCE_PATH = '../data/processed/one-day-transactions.csv'
+CLICKS_SOURCE_PATH = 'data/processed/one-day-clicks.csv'
+TRANSACTIONS_SOURCE_PATH = 'data/processed/one-day-transactions.csv'
 numerical_clicks_df_fields = ['product_id', 'quantity', 'item_price', 'promo_amount']
 categorical_clicks_df_fields = ['session_id', 'event_name', 'event_id', 'traffic_source',
                                 'payment_status', 'search_keywords', 'promo_code']
