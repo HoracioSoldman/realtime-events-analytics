@@ -25,8 +25,8 @@ The current project captures live events from a database and displays the retrie
   * [7. Elastic Consumer](#7-elastic-consumer)
   * [8. Create Dashboards on Kibana](#8-create-dashboards-on-kibana)
 - [Limitations and future improvements](#limitations-and-future-improvements)
-  * [1. Orchestration](#1-orchestration)
-  * [2. Backfilling process](#2-backfilling-process)
+
+  * [1. Backfilling process](#1-backfilling-process)
 
 
 ## Overview
