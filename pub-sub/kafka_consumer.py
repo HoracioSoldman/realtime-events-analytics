@@ -1,17 +1,28 @@
 import json
 import logging
 import time
+import os
 from elasticsearch import Elasticsearch, exceptions
 from kafka import KafkaConsumer
 from multiprocessing import Process
 from datetime import datetime
+from dotenv import load_dotenv
 
-ES_SERVER = 'http://127.0.0.1:9200'
-CLICKS_INDEX = 'clicks_index'
-TRANSACTIONS_INDEX = 'transactions_index'
+load_dotenv()
 
-CLICKS_KAFKA_TOPIC = 'streaming.public.clicks'
-TRANSACTIONS_KAFKA_TOPIC = 'streaming.public.transactions'
+# Environment-configurable settings with sane defaults
+ES_SERVER = os.getenv('ES_SERVER', 'http://127.0.0.1:9200')
+CLICKS_INDEX = os.getenv('ES_CLICKS_INDEX', 'clicks_index')
+TRANSACTIONS_INDEX = os.getenv('ES_TRANSACTIONS_INDEX', 'transactions_index')
+
+CLICKS_KAFKA_TOPIC = os.getenv('CLICKS_KAFKA_TOPIC', 'streaming.public.clicks')
+TRANSACTIONS_KAFKA_TOPIC = os.getenv('TRANSACTIONS_KAFKA_TOPIC', 'streaming.public.transactions')
+KAFKA_BOOTSTRAP = os.getenv('KAFKA_BOOTSTRAP', '127.0.0.1:29092')
+KAFKA_GROUP_ID = os.getenv('KAFKA_GROUP_ID', 'elastic-group')
+KAFKA_API_VERSION = tuple(
+    int(x) for x in os.getenv('KAFKA_API_VERSION', '3,5,1').split(',')
+)
+KAFKA_POLL_TIMEOUT_MS = int(os.getenv('KAFKA_POLL_TIMEOUT_MS', '2000'))
 
 
 def enable_index(es, the_index):
@@ -26,16 +37,16 @@ def kafka_consumer(kafka_topic, es, es_index):
     """
     consumer = KafkaConsumer(
         kafka_topic,
-        bootstrap_servers='127.0.0.1:29092', api_version=(3, 5, 1),
+        bootstrap_servers=KAFKA_BOOTSTRAP, api_version=KAFKA_API_VERSION,
         auto_offset_reset='earliest',
-        group_id="elastic-group"
+        group_id=KAFKA_GROUP_ID
     )
     print(f'The consumer for {kafka_topic} is up and listening.')
 
     while True:
         try:
             # pull messages every 2 seconds
-            consumer.poll(timeout_ms=2000)
+            consumer.poll(timeout_ms=KAFKA_POLL_TIMEOUT_MS)
 
             # receive messages
             for consumption in consumer:

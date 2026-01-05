@@ -1,13 +1,16 @@
-FROM python:3.10
-
-USER root
+FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-RUN pip install -r requirements.txt
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY data pub_sub .
+# Copy application code
+COPY data ./data
+COPY pub-sub ./pub-sub
 
-CMD python pub-sub/elastic_consumer.py & python pub-sub/ingestion.py
+# Default command runs both consumers in background and keeps container alive
+CMD python pub-sub/kafka_consumer.py & python pub-sub/ingestion.py
